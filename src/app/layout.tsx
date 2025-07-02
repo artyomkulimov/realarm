@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Re-Alarm",
-	description: "Loud and repetitive alarm",
+	title: "re-alarm",
+	description: "loud and repetitive alarm",
 };
 
 export default function RootLayout({

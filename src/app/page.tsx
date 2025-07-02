@@ -12,6 +12,7 @@ export default function Page() {
 	const [sleepMinutes, setSleepMinutes] = useState(0);
 	const [intervalMinutes, setIntervalMinutes] = useState(0);
 	const [volume, setVolume] = useState(50);
+	const [alarmSound, setAlarmSound] = useState("Air Raid Siren.mp3");
 	const [status, setStatus] = useState<AlarmStatus>("setup");
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
@@ -20,17 +21,13 @@ export default function Page() {
 	const [isTestingAlarm, setIsTestingAlarm] = useState(false);
 
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
-	const testAlarmTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	useAlarmSound(status === "alarming" || isTestingAlarm, volume);
+	useAlarmSound(status === "alarming" || isTestingAlarm, volume, alarmSound);
 
 	useEffect(() => {
 		return () => {
 			if (timerRef.current) {
 				clearInterval(timerRef.current);
-			}
-			if (testAlarmTimeoutRef.current) {
-				clearTimeout(testAlarmTimeoutRef.current);
 			}
 		};
 	}, []);
@@ -41,11 +38,13 @@ export default function Page() {
 	};
 
 	const testAlarm = () => {
-		setIsTestingAlarm(true);
-		// Play alarm for 3 seconds for testing
-		testAlarmTimeoutRef.current = setTimeout(() => {
+		if (isTestingAlarm) {
+			// Stop the test alarm
 			setIsTestingAlarm(false);
-		}, 3000);
+		} else {
+			// Start the test alarm (will loop continuously)
+			setIsTestingAlarm(true);
+		}
 	};
 
 	const startInitialSleep = () => {
@@ -101,9 +100,6 @@ export default function Page() {
 		if (timerRef.current) {
 			clearInterval(timerRef.current);
 		}
-		if (testAlarmTimeoutRef.current) {
-			clearTimeout(testAlarmTimeoutRef.current);
-		}
 		setIsTestingAlarm(false);
 		setStatus("setup");
 		setTimeRemaining(0);
@@ -119,10 +115,13 @@ export default function Page() {
 				sleepMinutes={sleepMinutes}
 				intervalMinutes={intervalMinutes}
 				volume={volume}
+				alarmSound={alarmSound}
+				isTestingAlarm={isTestingAlarm}
 				onSleepHoursChange={setSleepHours}
 				onSleepMinutesChange={setSleepMinutes}
 				onIntervalChange={setIntervalMinutes}
 				onVolumeChange={setVolume}
+				onAlarmSoundChange={setAlarmSound}
 				onStart={startCycle}
 				onReset={resetApp}
 				onTestAlarm={testAlarm}

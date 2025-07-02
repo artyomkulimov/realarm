@@ -2,19 +2,36 @@
 
 import { useEffect, useRef } from "react"
 
-export const useAlarmSound = (isAlarming: boolean, volume: number = 50) => {
+export const useAlarmSound = (isAlarming: boolean, volume: number = 50, soundFile: string = "Air Raid Siren.mp3") => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
+  // Initialize audio file when sound file changes
   useEffect(() => {
-    // Pre-load the alarm sound
-    if (!audioRef.current) {
-      audioRef.current = new Audio('/sounds/Air Raid Siren.mp3')
+    if (!audioRef.current || audioRef.current.src !== `/sounds/${soundFile}`) {
+      // Clean up previous audio if switching sounds
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      
+      audioRef.current = new Audio(`/sounds/${soundFile}`)
       audioRef.current.loop = true
       audioRef.current.preload = 'auto'
     }
+  }, [soundFile])
+
+  // Handle volume changes separately to avoid interrupting playback
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100
+    }
+  }, [volume])
+
+  // Handle play/pause logic
+  useEffect(() => {
+    if (!audioRef.current) return
 
     const audio = audioRef.current
-    audio.volume = volume / 100
 
     if (isAlarming) {
       // Reset to beginning and play
@@ -33,7 +50,7 @@ export const useAlarmSound = (isAlarming: boolean, volume: number = 50) => {
         audio.currentTime = 0
       }
     }
-  }, [isAlarming, volume])
+  }, [isAlarming])
 
   // Cleanup on unmount
   useEffect(() => {

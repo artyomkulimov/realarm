@@ -8,10 +8,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { AlarmClock, Volume2 } from "lucide-react";
+import { AlarmClock, Volume2, Square } from "lucide-react";
 import { SleepDurationInput } from "./sleep-duration-input";
 import { IntervalInput } from "./interval-input";
 import { VolumeInput } from "./volume-input";
+import { AlarmSoundSelector } from "./alarm-sound-selector";
 import { ResetButton } from "./reset-button";
 
 interface SetupFormProps {
@@ -19,10 +20,13 @@ interface SetupFormProps {
 	sleepMinutes: number;
 	intervalMinutes: number;
 	volume: number;
+	alarmSound: string;
+	isTestingAlarm: boolean;
 	onSleepHoursChange: (hours: number) => void;
 	onSleepMinutesChange: (minutes: number) => void;
 	onIntervalChange: (minutes: number) => void;
 	onVolumeChange: (volume: number) => void;
+	onAlarmSoundChange: (sound: string) => void;
 	onStart: () => void;
 	onReset: () => void;
 	onTestAlarm: () => void;
@@ -33,10 +37,13 @@ export function SetupForm({
 	sleepMinutes,
 	intervalMinutes,
 	volume,
+	alarmSound,
+	isTestingAlarm,
 	onSleepHoursChange,
 	onSleepMinutesChange,
 	onIntervalChange,
 	onVolumeChange,
+	onAlarmSoundChange,
 	onStart,
 	onReset,
 	onTestAlarm,
@@ -66,14 +73,27 @@ export function SetupForm({
 						onChange={onIntervalChange}
 					/>
 					<VolumeInput volume={volume} onChange={onVolumeChange} />
+					<AlarmSoundSelector
+						selectedSound={alarmSound}
+						onSoundChange={onAlarmSoundChange}
+					/>
 					<div className="flex gap-2">
 						<Button
 							onClick={onTestAlarm}
 							className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white"
 							size="lg"
 						>
-							<Volume2 className="w-4 h-4 mr-2" />
-							Test Alarm
+							{isTestingAlarm ? (
+								<>
+									<Square className="w-4 h-4 mr-2" />
+									Stop Test
+								</>
+							) : (
+								<>
+									<Volume2 className="w-4 h-4 mr-2" />
+									Test Alarm
+								</>
+							)}
 						</Button>
 						<Button
 							onClick={onStart}
