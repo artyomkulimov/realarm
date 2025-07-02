@@ -14,7 +14,7 @@ export function VolumeInput({ volume, onChange }: VolumeInputProps) {
 		<div className="space-y-3">
 			<div className="flex items-center gap-2">
 				<Volume2 className="w-4 h-4 text-zinc-400" />
-				<Label className="text-zinc-200">Volume</Label>
+				<Label className="text-zinc-200">volume</Label>
 				<span className="text-sm text-zinc-400 ml-auto">{volume}%</span>
 			</div>
 			<Slider

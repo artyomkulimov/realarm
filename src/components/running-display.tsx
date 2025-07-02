@@ -42,13 +42,13 @@ export function RunningDisplay({
 	const getStatusText = () => {
 		switch (status) {
 			case "sleeping":
-				return "Initial sleep period...";
+				return "initial sleep period...";
 			case "alarming":
-				return "ALARM! Wake up!";
+				return "alarm! wake up!";
 			case "interval":
-				return "Interval break - next alarm coming";
+				return "interval break - next alarm coming";
 			default:
-				return "Ready to start";
+				return "ready to start";
 		}
 	};
 
@@ -59,10 +59,10 @@ export function RunningDisplay({
 				<CardHeader className="text-center">
 					<CardTitle className="flex items-center justify-center gap-2 text-white">
 						<StatusIcon status={status} />
-						Sleep Cycle Alarm
+						sleep cycle alarm
 					</CardTitle>
 					<CardDescription className="text-zinc-400">
-						Cycle #{cycleCount + 1} • {getStatusText()}
+						cycle #{cycleCount + 1} • {getStatusText()}
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">

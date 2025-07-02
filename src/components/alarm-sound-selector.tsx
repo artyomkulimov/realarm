@@ -15,8 +15,8 @@ interface AlarmSoundSelectorProps {
 }
 
 const ALARM_SOUNDS = [
-	{ file: "Air Raid Siren.mp3", name: "Air Raid Siren", emoji: "🚨" },
-	{ file: "Rooster.wav", name: "Rooster", emoji: "🐓" },
+	{ file: "Air Raid Siren.mp3", name: "air raid siren", emoji: "🚨" },
+	{ file: "Rooster.wav", name: "rooster", emoji: "🐓" },
 ];
 
 export function AlarmSoundSelector({
@@ -29,7 +29,7 @@ export function AlarmSoundSelector({
 
 	return (
 		<div className="space-y-3">
-			<Label className="text-zinc-200">Alarm Sound</Label>
+			<Label className="text-zinc-200">alarm sound</Label>
 			<Select value={selectedSound} onValueChange={onSoundChange}>
 				<SelectTrigger className="w-full bg-zinc-900 border-zinc-700 text-white">
 					<SelectValue>

@@ -30,7 +30,7 @@ export function IntervalInput({ minutes, onChange }: IntervalInputProps) {
 	return (
 		<div className="space-y-2">
 			<Label htmlFor="interval-time" className="text-zinc-200">
-				Alarm Interval (minutes)
+				alarm interval (minutes)
 			</Label>
 			<Input
 				id="interval-time"

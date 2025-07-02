@@ -55,10 +55,10 @@ export function SetupForm({
 				<CardHeader className="text-center">
 					<CardTitle className="flex items-center justify-center gap-2 text-white">
 						{/* <AlarmClock className="w-6 h-6" /> */}
-						Re-Alarm
+						re-alarm
 					</CardTitle>
 					<CardDescription className="text-zinc-400">
-						Set your sleep duration and alarm intervals
+						set your sleep duration and alarm intervals
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
@@ -86,12 +86,12 @@ export function SetupForm({
 							{isTestingAlarm ? (
 								<>
 									<Square className="w-4 h-4 mr-2" />
-									Stop Test
+									stop test
 								</>
 							) : (
 								<>
 									<Volume2 className="w-4 h-4 mr-2" />
-									Test Alarm
+									test alarm
 								</>
 							)}
 						</Button>
@@ -100,7 +100,7 @@ export function SetupForm({
 							className="flex-1 bg-green-600 hover:bg-green-500 text-white"
 							size="lg"
 						>
-							Start Sleep Cycle
+							start sleep cycle
 						</Button>
 					</div>
 				</CardContent>

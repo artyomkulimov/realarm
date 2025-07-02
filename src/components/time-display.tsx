@@ -9,8 +9,8 @@ export function TimeDisplay({ timeRemaining, status }: TimeDisplayProps) {
 			</div>
 			<div className="text-sm text-zinc-400 mt-1">
 				{status === "sleeping"
-					? "Time until alarm"
-					: "Time until next alarm"}
+					? "time until alarm"
+					: "time until next alarm"}
 			</div>
 		</div>
 	);
