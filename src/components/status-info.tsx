@@ -12,7 +12,7 @@ export function StatusInfo({
 				sleep: {sleepHours}h {sleepMinutes}m • interval:{" "}
 				{intervalMinutes}min
 			</div>
-			<div className="mt-1">completed cycles: {cycleCount}</div>
+			{/* <div className="mt-1">completed cycles: {cycleCount}</div> */}
 		</div>
 	);
 }

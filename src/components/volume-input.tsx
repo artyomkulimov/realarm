@@ -10,6 +10,10 @@ interface VolumeInputProps {
 }
 
 export function VolumeInput({ volume, onChange }: VolumeInputProps) {
+	const handleValueChange = (values: number[]) => {
+		onChange(values[0]);
+	};
+
 	return (
 		<div className="space-y-3">
 			<div className="flex items-center gap-2">
@@ -18,8 +22,8 @@ export function VolumeInput({ volume, onChange }: VolumeInputProps) {
 				<span className="text-sm text-zinc-400 ml-auto">{volume}%</span>
 			</div>
 			<Slider
-				value={volume}
-				onValueChange={onChange}
+				value={[volume]}
+				onValueChange={handleValueChange}
 				min={0}
 				max={100}
 				step={1}
