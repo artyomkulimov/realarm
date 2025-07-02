@@ -36,7 +36,7 @@ function Slider({
 				"[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4",
 				"[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer",
 				"[&::-moz-range-thumb]:border-0 [&::-moz-range-track]:bg-zinc-800 [&::-moz-range-track]:rounded-lg [&::-moz-range-track]:h-2",
-				"focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-black",
+				"focus:outline-none",
 				className
 			)}
 			{...props}

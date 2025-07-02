@@ -47,8 +47,8 @@ export function SetupForm({
 			<Card className="w-full max-w-md bg-zinc-950 border-zinc-800">
 				<CardHeader className="text-center">
 					<CardTitle className="flex items-center justify-center gap-2 text-white">
-						<AlarmClock className="w-6 h-6" />
-						Sleep Cycle Alarm
+						{/* <AlarmClock className="w-6 h-6" /> */}
+						Re-Alarm
 					</CardTitle>
 					<CardDescription className="text-zinc-400">
 						Set your sleep duration and alarm intervals
