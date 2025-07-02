@@ -4,6 +4,7 @@ export interface AlarmState {
   sleepHours: number
   sleepMinutes: number
   intervalMinutes: number
+  volume: number
   status: AlarmStatus
   timeRemaining: number
   totalTime: number
@@ -30,6 +31,11 @@ export interface SleepDurationProps {
 export interface IntervalInputProps {
   minutes: number
   onChange: (minutes: number) => void
+}
+
+export interface VolumeInputProps {
+  volume: number
+  onChange: (volume: number) => void
 }
 
 export interface StatusIconProps {

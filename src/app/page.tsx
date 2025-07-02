@@ -1,127 +1,146 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { SetupForm } from "../components/setup-form"
-import { RunningDisplay } from "../components/running-display"
-import { useAlarmSound } from "../hooks/use-alarm-sound"
-import { convertToSeconds, convertMinutesToSeconds } from "../utils/time"
-import type { AlarmStatus } from "../types/alarm"
+import { useState, useRef, useEffect } from "react";
+import { SetupForm } from "../components/setup-form";
+import { RunningDisplay } from "../components/running-display";
+import { useAlarmSound } from "../hooks/use-alarm-sound";
+import { convertToSeconds, convertMinutesToSeconds } from "../utils/time";
+import type { AlarmStatus } from "../types/alarm";
 
 export default function Page() {
-  const [sleepHours, setSleepHours] = useState(0)
-  const [sleepMinutes, setSleepMinutes] = useState(20)
-  const [intervalMinutes, setIntervalMinutes] = useState(5)
-  const [status, setStatus] = useState<AlarmStatus>("setup")
-  const [timeRemaining, setTimeRemaining] = useState(0)
-  const [totalTime, setTotalTime] = useState(0)
-  const [cycleCount, setCycleCount] = useState(0)
-  const [isInitialSleep, setIsInitialSleep] = useState(true)
+	const [sleepHours, setSleepHours] = useState(1);
+	const [sleepMinutes, setSleepMinutes] = useState(0);
+	const [intervalMinutes, setIntervalMinutes] = useState(0);
+	const [volume, setVolume] = useState(50);
+	const [status, setStatus] = useState<AlarmStatus>("setup");
+	const [timeRemaining, setTimeRemaining] = useState(0);
+	const [totalTime, setTotalTime] = useState(0);
+	const [cycleCount, setCycleCount] = useState(0);
+	const [isInitialSleep, setIsInitialSleep] = useState(true);
+	const [isTestingAlarm, setIsTestingAlarm] = useState(false);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const testAlarmTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Use the alarm sound hook
-  useAlarmSound(status === "alarming")
+	useAlarmSound(status === "alarming" || isTestingAlarm, volume);
 
-  // Cleanup timers on unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
-    }
-  }, [])
+	useEffect(() => {
+		return () => {
+			if (timerRef.current) {
+				clearInterval(timerRef.current);
+			}
+			if (testAlarmTimeoutRef.current) {
+				clearTimeout(testAlarmTimeoutRef.current);
+			}
+		};
+	}, []);
 
-  const startCycle = () => {
-    setCycleCount(0)
-    startInitialSleep()
-  }
+	const startCycle = () => {
+		setCycleCount(0);
+		startInitialSleep();
+	};
 
-  const startInitialSleep = () => {
-    const sleepTime = convertToSeconds(sleepHours, sleepMinutes)
-    setStatus("sleeping")
-    setTimeRemaining(sleepTime)
-    setTotalTime(sleepTime)
-    setIsInitialSleep(true)
+	const testAlarm = () => {
+		setIsTestingAlarm(true);
+		// Play alarm for 3 seconds for testing
+		testAlarmTimeoutRef.current = setTimeout(() => {
+			setIsTestingAlarm(false);
+		}, 3000);
+	};
 
-    timerRef.current = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!)
-          setIsInitialSleep(false)
-          startAlarmPhase()
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-  }
+	const startInitialSleep = () => {
+		const sleepTime = convertToSeconds(sleepHours, sleepMinutes);
+		setStatus("sleeping");
+		setTimeRemaining(sleepTime);
+		setTotalTime(sleepTime);
+		setIsInitialSleep(true);
 
-  const startAlarmPhase = () => {
-    setStatus("alarming")
-    setTimeRemaining(0)
-    setTotalTime(0)
-  }
+		timerRef.current = setInterval(() => {
+			setTimeRemaining((prev) => {
+				if (prev <= 1) {
+					clearInterval(timerRef.current!);
+					setIsInitialSleep(false);
+					startAlarmPhase();
+					return 0;
+				}
+				return prev - 1;
+			});
+		}, 1000);
+	};
 
-  const stopAlarm = () => {
-    setCycleCount((prev) => prev + 1)
-    startIntervalPhase()
-  }
+	const startAlarmPhase = () => {
+		setStatus("alarming");
+		setTimeRemaining(0);
+		setTotalTime(0);
+	};
 
-  const startIntervalPhase = () => {
-    const intervalTime = convertMinutesToSeconds(intervalMinutes)
-    setStatus("interval")
-    setTimeRemaining(intervalTime)
-    setTotalTime(intervalTime)
+	const stopAlarm = () => {
+		setCycleCount((prev) => prev + 1);
+		startIntervalPhase();
+	};
 
-    timerRef.current = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!)
-          startAlarmPhase()
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-  }
+	const startIntervalPhase = () => {
+		const intervalTime = convertMinutesToSeconds(intervalMinutes);
+		setStatus("interval");
+		setTimeRemaining(intervalTime);
+		setTotalTime(intervalTime);
 
-  const resetApp = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-    }
-    setStatus("setup")
-    setTimeRemaining(0)
-    setTotalTime(0)
-    setCycleCount(0)
-    setIsInitialSleep(true)
-  }
+		timerRef.current = setInterval(() => {
+			setTimeRemaining((prev) => {
+				if (prev <= 1) {
+					clearInterval(timerRef.current!);
+					startAlarmPhase();
+					return 0;
+				}
+				return prev - 1;
+			});
+		}, 1000);
+	};
 
-  if (status === "setup") {
-    return (
-      <SetupForm
-        sleepHours={sleepHours}
-        sleepMinutes={sleepMinutes}
-        intervalMinutes={intervalMinutes}
-        onSleepHoursChange={setSleepHours}
-        onSleepMinutesChange={setSleepMinutes}
-        onIntervalChange={setIntervalMinutes}
-        onStart={startCycle}
-        onReset={resetApp}
-      />
-    )
-  }
+	const resetApp = () => {
+		if (timerRef.current) {
+			clearInterval(timerRef.current);
+		}
+		if (testAlarmTimeoutRef.current) {
+			clearTimeout(testAlarmTimeoutRef.current);
+		}
+		setIsTestingAlarm(false);
+		setStatus("setup");
+		setTimeRemaining(0);
+		setTotalTime(0);
+		setCycleCount(0);
+		setIsInitialSleep(true);
+	};
 
-  return (
-    <RunningDisplay
-      status={status}
-      cycleCount={cycleCount}
-      timeRemaining={timeRemaining}
-      totalTime={totalTime}
-      sleepHours={sleepHours}
-      sleepMinutes={sleepMinutes}
-      intervalMinutes={intervalMinutes}
-      onStopAlarm={stopAlarm}
-      onReset={resetApp}
-    />
-  )
+	if (status === "setup") {
+		return (
+			<SetupForm
+				sleepHours={sleepHours}
+				sleepMinutes={sleepMinutes}
+				intervalMinutes={intervalMinutes}
+				volume={volume}
+				onSleepHoursChange={setSleepHours}
+				onSleepMinutesChange={setSleepMinutes}
+				onIntervalChange={setIntervalMinutes}
+				onVolumeChange={setVolume}
+				onStart={startCycle}
+				onReset={resetApp}
+				onTestAlarm={testAlarm}
+			/>
+		);
+	}
+
+	return (
+		<RunningDisplay
+			status={status}
+			cycleCount={cycleCount}
+			timeRemaining={timeRemaining}
+			totalTime={totalTime}
+			sleepHours={sleepHours}
+			sleepMinutes={sleepMinutes}
+			intervalMinutes={intervalMinutes}
+			onStopAlarm={stopAlarm}
+			onReset={resetApp}
+		/>
+	);
 }

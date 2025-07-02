@@ -16,11 +16,9 @@ export function TimeInput({
 	const [displayValue, setDisplayValue] = useState("");
 	const [hasBeenFocused, setHasBeenFocused] = useState(false);
 
-	// Initialize display value based on prop value
 	useEffect(() => {
 		if (!hasBeenFocused) {
-			// Show empty for initial 0 values, show actual value for non-zero
-			setDisplayValue(value === 0 ? "" : value.toString());
+			setDisplayValue(value.toString());
 		}
 	}, [value, hasBeenFocused]);
 
@@ -28,17 +26,12 @@ export function TimeInput({
 		const inputValue = e.target.value;
 		setDisplayValue(inputValue);
 
-		// Convert to number: empty string becomes 0, otherwise parse the number
 		const numericValue = inputValue === "" ? 0 : Number(inputValue);
 		onChange(numericValue);
 	};
 
 	const handleFocus = () => {
 		setHasBeenFocused(true);
-		// If showing empty but value is 0, user might want to see the 0
-		if (displayValue === "" && value === 0) {
-			// Keep it empty, let user decide what to type
-		}
 	};
 
 	return (
