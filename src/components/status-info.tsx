@@ -4,7 +4,6 @@ export function StatusInfo({
 	sleepHours,
 	sleepMinutes,
 	intervalMinutes,
-	cycleCount,
 }: StatusInfoProps) {
 	return (
 		<div className="text-center text-sm text-zinc-500">

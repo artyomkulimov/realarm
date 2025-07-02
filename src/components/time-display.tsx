@@ -1,3 +1,5 @@
+"use client";
+
 import { formatTime } from "../utils/time";
 import type { TimeDisplayProps } from "../types/alarm";
 

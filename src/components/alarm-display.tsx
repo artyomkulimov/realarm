@@ -1,6 +1,6 @@
 import type { AlarmDisplayProps } from "../types/alarm";
 
-export function AlarmDisplay({ onStopAlarm }: AlarmDisplayProps) {
+export function AlarmDisplay({}: AlarmDisplayProps) {
 	return (
 		<div className="text-center space-y-4">
 			<div className="text-6xl animate-pulse">🚨</div>

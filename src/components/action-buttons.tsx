@@ -4,11 +4,7 @@ import { Button } from "@/components/ui/button";
 import { StopCircle } from "lucide-react";
 import type { ActionButtonsProps } from "../types/alarm";
 
-export function ActionButtons({
-	status,
-	onStopAlarm,
-	onReset,
-}: ActionButtonsProps) {
+export function ActionButtons({ status, onStopAlarm }: ActionButtonsProps) {
 	return (
 		<div className="flex gap-2">
 			{status === "alarming" && (

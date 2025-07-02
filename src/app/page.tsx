@@ -4,7 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { SetupForm } from "../components/setup-form";
 import { RunningDisplay } from "../components/running-display";
 import { useAlarmSound } from "../hooks/use-alarm-sound";
-import { convertToSeconds, convertMinutesToSeconds } from "../utils/time";
+import {
+	convertToSeconds,
+	convertMinutesToSeconds,
+	calculateWakeupTime,
+} from "../utils/time";
 import type { AlarmStatus } from "../types/alarm";
 
 export default function Page() {
@@ -17,8 +21,8 @@ export default function Page() {
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
 	const [cycleCount, setCycleCount] = useState(0);
-	const [isInitialSleep, setIsInitialSleep] = useState(true);
 	const [isTestingAlarm, setIsTestingAlarm] = useState(false);
+	const [wakeupTime, setWakeupTime] = useState<string>("");
 
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -34,15 +38,18 @@ export default function Page() {
 
 	const startCycle = () => {
 		setCycleCount(0);
+		const calculatedWakeupTime = calculateWakeupTime(
+			sleepHours,
+			sleepMinutes
+		);
+		setWakeupTime(calculatedWakeupTime);
 		startInitialSleep();
 	};
 
 	const testAlarm = () => {
 		if (isTestingAlarm) {
-			// Stop the test alarm
 			setIsTestingAlarm(false);
 		} else {
-			// Start the test alarm (will loop continuously)
 			setIsTestingAlarm(true);
 		}
 	};
@@ -52,13 +59,11 @@ export default function Page() {
 		setStatus("sleeping");
 		setTimeRemaining(sleepTime);
 		setTotalTime(sleepTime);
-		setIsInitialSleep(true);
 
 		timerRef.current = setInterval(() => {
 			setTimeRemaining((prev) => {
 				if (prev <= 1) {
 					clearInterval(timerRef.current!);
-					setIsInitialSleep(false);
 					startAlarmPhase();
 					return 0;
 				}
@@ -105,7 +110,7 @@ export default function Page() {
 		setTimeRemaining(0);
 		setTotalTime(0);
 		setCycleCount(0);
-		setIsInitialSleep(true);
+		setWakeupTime("");
 	};
 
 	if (status === "setup") {
@@ -138,6 +143,7 @@ export default function Page() {
 			sleepHours={sleepHours}
 			sleepMinutes={sleepMinutes}
 			intervalMinutes={intervalMinutes}
+			wakeupTime={wakeupTime}
 			onStopAlarm={stopAlarm}
 			onReset={resetApp}
 		/>

@@ -14,6 +14,7 @@ import { AlarmDisplay } from "./alarm-display";
 import { ActionButtons } from "./action-buttons";
 import { StatusInfo } from "./status-info";
 import { ResetButton } from "./reset-button";
+import { WakeupTimeDisplay } from "./wakeup-time-display";
 import type { AlarmStatus } from "../types/alarm";
 
 interface RunningDisplayProps {
@@ -24,6 +25,7 @@ interface RunningDisplayProps {
 	sleepHours: number;
 	sleepMinutes: number;
 	intervalMinutes: number;
+	wakeupTime: string;
 	onStopAlarm: () => void;
 	onReset: () => void;
 }
@@ -36,6 +38,7 @@ export function RunningDisplay({
 	sleepHours,
 	sleepMinutes,
 	intervalMinutes,
+	wakeupTime,
 	onStopAlarm,
 	onReset,
 }: RunningDisplayProps) {
@@ -64,6 +67,11 @@ export function RunningDisplay({
 					<CardDescription className="text-zinc-400">
 						cycle #{cycleCount + 1} • {getStatusText()}
 					</CardDescription>
+					{wakeupTime && (
+						<div className="mt-2">
+							<WakeupTimeDisplay wakeupTime={wakeupTime} />
+						</div>
+					)}
 				</CardHeader>
 				<CardContent className="space-y-6">
 					{status !== "alarming" && (

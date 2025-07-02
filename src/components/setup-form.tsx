@@ -1,19 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { AlarmClock, Volume2, Square } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Volume2, Square } from "lucide-react";
 import { SleepDurationInput } from "./sleep-duration-input";
 import { IntervalInput } from "./interval-input";
 import { VolumeInput } from "./volume-input";
 import { AlarmSoundSelector } from "./alarm-sound-selector";
 import { ResetButton } from "./reset-button";
+import { CurrentTimeDisplay } from "./current-time-display";
 
 interface SetupFormProps {
 	sleepHours: number;
@@ -54,12 +49,9 @@ export function SetupForm({
 			<Card className="w-full max-w-md bg-zinc-950 border-zinc-800">
 				<CardHeader className="text-center">
 					<CardTitle className="flex items-center justify-center gap-2 text-white">
-						{/* <AlarmClock className="w-6 h-6" /> */}
 						re-alarm
 					</CardTitle>
-					<CardDescription className="text-zinc-400">
-						set your sleep duration and alarm intervals
-					</CardDescription>
+					<CurrentTimeDisplay />
 				</CardHeader>
 				<CardContent className="space-y-6">
 					<SleepDurationInput
