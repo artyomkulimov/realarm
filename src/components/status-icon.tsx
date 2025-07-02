@@ -6,9 +6,7 @@ export function StatusIcon({ status }: StatusIconProps) {
 		case "sleeping":
 			return <MoonStar className="w-8 h-8" />;
 		case "alarming":
-			return (
-				<AlarmClock className="w-8 h-8 text-red-500 animate-bounce" />
-			);
+			return <AlarmClock className="w-8 h-8 text-red-500" />;
 		case "interval":
 			return <Clock className="w-8 h-8 text-orange-400" />;
 		default:
