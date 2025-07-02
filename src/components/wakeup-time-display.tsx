@@ -1,7 +1,6 @@
 "use client";
 
 import { calculateWakeupTime } from "../utils/time";
-import { Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface WakeupTimeDisplayProps {
@@ -20,7 +19,7 @@ export function WakeupTimeDisplay({
 			<CardContent className="py-4">
 				<div className="text-center">
 					<div className="flex items-center justify-center gap-2 text-sm text-zinc-400 mb-2">
-						you'll wake up at:
+						you&apos;ll wake up at:
 					</div>
 					<div className="text-2xl font-bold text-green-400">
 						{wakeupTime}
