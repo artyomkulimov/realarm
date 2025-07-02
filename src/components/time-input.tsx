@@ -36,7 +36,7 @@ export function TimeInput({
 
 	return (
 		<div className="flex-1">
-			<Label htmlFor={id} className="text-xs text-zinc-400">
+			<Label htmlFor={id} className="text-xs text-zinc-400 pb-1">
 				{label}
 			</Label>
 			<Input

@@ -9,6 +9,7 @@ import { VolumeInput } from "./volume-input";
 import { AlarmSoundSelector } from "./alarm-sound-selector";
 import { ResetButton } from "./reset-button";
 import { CurrentTimeDisplay } from "./current-time-display";
+import { WakeupTimeDisplay } from "./wakeup-time-display";
 
 interface SetupFormProps {
 	sleepHours: number;
@@ -44,8 +45,12 @@ export function SetupForm({
 	onTestAlarm,
 }: SetupFormProps) {
 	return (
-		<div className="relative flex items-center justify-center min-h-screen bg-black p-4">
+		<div className="relative flex flex-col items-center justify-center min-h-screen bg-black p-4">
 			<ResetButton onReset={onReset} />
+			<WakeupTimeDisplay
+				sleepHours={sleepHours}
+				sleepMinutes={sleepMinutes}
+			/>
 			<Card className="w-full max-w-md bg-zinc-950 border-zinc-800">
 				<CardHeader className="text-center">
 					<CardTitle className="flex items-center justify-center gap-2 text-white">

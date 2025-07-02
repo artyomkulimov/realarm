@@ -25,7 +25,6 @@ interface RunningDisplayProps {
 	sleepHours: number;
 	sleepMinutes: number;
 	intervalMinutes: number;
-	wakeupTime: string;
 	onStopAlarm: () => void;
 	onReset: () => void;
 }
@@ -38,7 +37,6 @@ export function RunningDisplay({
 	sleepHours,
 	sleepMinutes,
 	intervalMinutes,
-	wakeupTime,
 	onStopAlarm,
 	onReset,
 }: RunningDisplayProps) {
@@ -56,8 +54,12 @@ export function RunningDisplay({
 	};
 
 	return (
-		<div className="relative flex items-center justify-center min-h-screen bg-black p-4">
+		<div className="relative flex flex-col items-center justify-center min-h-screen bg-black p-4">
 			<ResetButton onReset={onReset} />
+			<WakeupTimeDisplay
+				sleepHours={sleepHours}
+				sleepMinutes={sleepMinutes}
+			/>
 			<Card className="w-full max-w-md bg-zinc-950 border-zinc-800">
 				<CardHeader className="text-center">
 					<CardTitle className="flex items-center justify-center gap-2 text-white">
@@ -67,11 +69,6 @@ export function RunningDisplay({
 					<CardDescription className="text-zinc-400">
 						cycle #{cycleCount + 1} • {getStatusText()}
 					</CardDescription>
-					{wakeupTime && (
-						<div className="mt-2">
-							<WakeupTimeDisplay wakeupTime={wakeupTime} />
-						</div>
-					)}
 				</CardHeader>
 				<CardContent className="space-y-6">
 					{status !== "alarming" && (

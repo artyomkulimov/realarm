@@ -4,11 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { SetupForm } from "../components/setup-form";
 import { RunningDisplay } from "../components/running-display";
 import { useAlarmSound } from "../hooks/use-alarm-sound";
-import {
-	convertToSeconds,
-	convertMinutesToSeconds,
-	calculateWakeupTime,
-} from "../utils/time";
+import { convertToSeconds, convertMinutesToSeconds } from "../utils/time";
 import type { AlarmStatus } from "../types/alarm";
 
 export default function Page() {
@@ -22,7 +18,6 @@ export default function Page() {
 	const [totalTime, setTotalTime] = useState(0);
 	const [cycleCount, setCycleCount] = useState(0);
 	const [isTestingAlarm, setIsTestingAlarm] = useState(false);
-	const [wakeupTime, setWakeupTime] = useState<string>("");
 
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -38,11 +33,6 @@ export default function Page() {
 
 	const startCycle = () => {
 		setCycleCount(0);
-		const calculatedWakeupTime = calculateWakeupTime(
-			sleepHours,
-			sleepMinutes
-		);
-		setWakeupTime(calculatedWakeupTime);
 		startInitialSleep();
 	};
 
@@ -110,7 +100,6 @@ export default function Page() {
 		setTimeRemaining(0);
 		setTotalTime(0);
 		setCycleCount(0);
-		setWakeupTime("");
 	};
 
 	if (status === "setup") {
@@ -143,7 +132,6 @@ export default function Page() {
 			sleepHours={sleepHours}
 			sleepMinutes={sleepMinutes}
 			intervalMinutes={intervalMinutes}
-			wakeupTime={wakeupTime}
 			onStopAlarm={stopAlarm}
 			onReset={resetApp}
 		/>
