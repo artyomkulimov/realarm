@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { SetupForm } from "../components/setup-form";
 import { RunningDisplay } from "../components/running-display";
 import { useAlarmSound } from "../hooks/use-alarm-sound";
-import { convertToSeconds, convertMinutesToSeconds } from "../utils/time";
+import { convertToSeconds, convertMinutesToSeconds, calculateWakeupTime } from "../utils/time";
 import type { AlarmStatus } from "../types/alarm";
 
 export default function Page() {
@@ -18,6 +18,7 @@ export default function Page() {
 	const [totalTime, setTotalTime] = useState(0);
 	const [cycleCount, setCycleCount] = useState(0);
 	const [isTestingAlarm, setIsTestingAlarm] = useState(false);
+	const [fixedWakeupTime, setFixedWakeupTime] = useState<string | null>(null);
 
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -33,6 +34,7 @@ export default function Page() {
 
 	const startCycle = () => {
 		setCycleCount(0);
+		setFixedWakeupTime(calculateWakeupTime(sleepHours, sleepMinutes));
 		startInitialSleep();
 	};
 
@@ -100,6 +102,7 @@ export default function Page() {
 		setTimeRemaining(0);
 		setTotalTime(0);
 		setCycleCount(0);
+		setFixedWakeupTime(null);
 	};
 
 	if (status === "setup") {
@@ -119,6 +122,7 @@ export default function Page() {
 				onStart={startCycle}
 				onReset={resetApp}
 				onTestAlarm={testAlarm}
+				fixedWakeupTime={fixedWakeupTime}
 			/>
 		);
 	}
@@ -134,6 +138,7 @@ export default function Page() {
 			intervalMinutes={intervalMinutes}
 			onStopAlarm={stopAlarm}
 			onReset={resetApp}
+			fixedWakeupTime={fixedWakeupTime}
 		/>
 	);
 }

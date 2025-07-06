@@ -1,18 +1,35 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { calculateWakeupTime } from "../utils/time";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface WakeupTimeDisplayProps {
 	sleepHours: number;
 	sleepMinutes: number;
+	fixedWakeupTime?: string | null;
 }
 
 export function WakeupTimeDisplay({
 	sleepHours,
 	sleepMinutes,
+	fixedWakeupTime,
 }: WakeupTimeDisplayProps) {
-	const wakeupTime = calculateWakeupTime(sleepHours, sleepMinutes);
+	const [wakeupTime, setWakeupTime] = useState<string>("");
+
+	useEffect(() => {
+		if (fixedWakeupTime) {
+			setWakeupTime(fixedWakeupTime);
+		} else {
+			setWakeupTime(calculateWakeupTime(sleepHours, sleepMinutes));
+			
+			const interval = setInterval(() => {
+				setWakeupTime(calculateWakeupTime(sleepHours, sleepMinutes));
+			}, 1000);
+
+			return () => clearInterval(interval);
+		}
+	}, [sleepHours, sleepMinutes, fixedWakeupTime]);
 
 	return (
 		<Card className="w-full max-w-md bg-zinc-950 border-zinc-800 mb-4">

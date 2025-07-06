@@ -27,6 +27,7 @@ interface RunningDisplayProps {
 	intervalMinutes: number;
 	onStopAlarm: () => void;
 	onReset: () => void;
+	fixedWakeupTime: string | null;
 }
 
 export function RunningDisplay({
@@ -39,6 +40,7 @@ export function RunningDisplay({
 	intervalMinutes,
 	onStopAlarm,
 	onReset,
+	fixedWakeupTime,
 }: RunningDisplayProps) {
 	const getStatusText = () => {
 		switch (status) {
@@ -59,6 +61,7 @@ export function RunningDisplay({
 			<WakeupTimeDisplay
 				sleepHours={sleepHours}
 				sleepMinutes={sleepMinutes}
+				fixedWakeupTime={fixedWakeupTime}
 			/>
 			<Card className="w-full max-w-md bg-zinc-950 border-zinc-800">
 				<CardHeader className="text-center">

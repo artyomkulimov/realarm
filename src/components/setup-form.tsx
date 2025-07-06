@@ -26,6 +26,7 @@ interface SetupFormProps {
 	onStart: () => void;
 	onReset: () => void;
 	onTestAlarm: () => void;
+	fixedWakeupTime: string | null;
 }
 
 export function SetupForm({
@@ -43,6 +44,7 @@ export function SetupForm({
 	onStart,
 	onReset,
 	onTestAlarm,
+	fixedWakeupTime,
 }: SetupFormProps) {
 	return (
 		<div className="relative flex flex-col items-center justify-center min-h-screen bg-black p-4">
@@ -50,6 +52,7 @@ export function SetupForm({
 			<WakeupTimeDisplay
 				sleepHours={sleepHours}
 				sleepMinutes={sleepMinutes}
+				fixedWakeupTime={fixedWakeupTime}
 			/>
 			<Card className="w-full max-w-md bg-zinc-950 border-zinc-800">
 				<CardHeader className="text-center">
