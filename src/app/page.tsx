@@ -120,6 +120,18 @@ export default function Page() {
 		};
 	}, [status, stopAlarm]);
 
+	useEffect(() => {
+		const handleClick = (e: MouseEvent) => {
+			if (status === "alarming") {
+				stopAlarm();
+			}
+		};
+		window.addEventListener("click", handleClick);
+		return () => {
+			window.removeEventListener("click", handleClick);
+		};
+	}, [status, stopAlarm]);
+
 	if (status === "setup") {
 		return (
 			<SetupForm
