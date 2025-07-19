@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { SetupForm } from "../components/setup-form";
 import { RunningDisplay } from "../components/running-display";
 import { useAlarmSound } from "../hooks/use-alarm-sound";
@@ -70,12 +70,7 @@ export default function Page() {
 		setTotalTime(0);
 	};
 
-	const stopAlarm = () => {
-		setCycleCount((prev) => prev + 1);
-		startIntervalPhase();
-	};
-
-	const startIntervalPhase = () => {
+	const startIntervalPhase = useCallback(() => {
 		const intervalTime = convertMinutesToSeconds(intervalMinutes);
 		setStatus("interval");
 		setTimeRemaining(intervalTime);
@@ -91,7 +86,12 @@ export default function Page() {
 				return prev - 1;
 			});
 		}, 1000);
-	};
+	}, [intervalMinutes]);
+
+	const stopAlarm = useCallback(() => {
+		setCycleCount((prev) => prev + 1);
+		startIntervalPhase();
+	}, [startIntervalPhase]);
 
 	const resetApp = () => {
 		if (timerRef.current) {
@@ -121,7 +121,7 @@ export default function Page() {
 	}, [status, stopAlarm]);
 
 	useEffect(() => {
-		const handleClick = (e: MouseEvent) => {
+		const handleClick = () => {
 			if (status === "alarming") {
 				stopAlarm();
 			}
