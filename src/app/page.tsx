@@ -10,7 +10,7 @@ import type { AlarmStatus } from "../types/alarm";
 export default function Page() {
 	const [sleepHours, setSleepHours] = useState(1);
 	const [sleepMinutes, setSleepMinutes] = useState(0);
-	const [intervalMinutes, setIntervalMinutes] = useState(0);
+	const [intervalMinutes, setIntervalMinutes] = useState(5);
 	const [volume, setVolume] = useState(50);
 	const [alarmSound, setAlarmSound] = useState("Air Raid Siren.mp3");
 	const [status, setStatus] = useState<AlarmStatus>("setup");
