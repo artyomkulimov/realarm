@@ -105,6 +105,21 @@ export default function Page() {
 		setFixedWakeupTime(null);
 	};
 
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.code === "Space") {
+				e.preventDefault();
+				if (status === "alarming") {
+					stopAlarm();
+				}
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [status, stopAlarm]);
+
 	if (status === "setup") {
 		return (
 			<SetupForm
