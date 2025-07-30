@@ -12,7 +12,7 @@ export function SleepDurationInput({
 }: SleepDurationProps) {
 	return (
 		<div className="space-y-3">
-			<Label className="text-zinc-200">sleep duration</Label>
+			<Label className="text-zinc-200">sleep duration (from now)</Label>
 			<div className="flex gap-2">
 				<TimeInput
 					id="sleep-hours"

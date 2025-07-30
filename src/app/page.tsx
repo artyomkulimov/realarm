@@ -21,6 +21,8 @@ export default function Page() {
 	const [fixedWakeupTime, setFixedWakeupTime] = useState<string | null>(null);
 
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+	const endTimeRef = useRef<number | null>(null);
 
 	useAlarmSound(status === "alarming" || isTestingAlarm, volume, alarmSound);
 
@@ -29,8 +31,51 @@ export default function Page() {
 			if (timerRef.current) {
 				clearInterval(timerRef.current);
 			}
+			if (wakeLockRef.current) {
+				wakeLockRef.current.release().catch(console.error);
+			}
 		};
 	}, []);
+
+	// Handle page visibility changes to maintain accurate timing
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible' && endTimeRef.current) {
+				// Recalculate time when page becomes visible
+				const now = Date.now();
+				const remaining = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
+				setTimeRemaining(remaining);
+				
+				if (remaining <= 0 && (status === 'sleeping' || status === 'interval')) {
+					if (timerRef.current) {
+						clearInterval(timerRef.current);
+					}
+					startAlarmPhase();
+				}
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+	}, [status]);
+
+	// Request wake lock when timer is active
+	const requestWakeLock = async () => {
+		try {
+			if ('wakeLock' in navigator) {
+				wakeLockRef.current = await navigator.wakeLock.request('screen');
+			}
+		} catch (err) {
+			console.error('Wake lock failed:', err);
+		}
+	};
+
+	const releaseWakeLock = () => {
+		if (wakeLockRef.current) {
+			wakeLockRef.current.release().catch(console.error);
+			wakeLockRef.current = null;
+		}
+	};
 
 	const startCycle = () => {
 		setCycleCount(0);
@@ -48,20 +93,28 @@ export default function Page() {
 
 	const startInitialSleep = () => {
 		const sleepTime = convertToSeconds(sleepHours, sleepMinutes);
+		const startTime = Date.now();
+		const endTime = startTime + (sleepTime * 1000);
+		
+		endTimeRef.current = endTime;
 		setStatus("sleeping");
 		setTimeRemaining(sleepTime);
 		setTotalTime(sleepTime);
 
+		requestWakeLock();
+
 		timerRef.current = setInterval(() => {
-			setTimeRemaining((prev) => {
-				if (prev <= 1) {
-					clearInterval(timerRef.current!);
-					startAlarmPhase();
-					return 0;
-				}
-				return prev - 1;
-			});
-		}, 1000);
+			const now = Date.now();
+			const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
+			
+			setTimeRemaining(remaining);
+			
+			if (remaining <= 0) {
+				clearInterval(timerRef.current!);
+				endTimeRef.current = null;
+				startAlarmPhase();
+			}
+		}, 100);
 	};
 
 	const startAlarmPhase = () => {
@@ -72,20 +125,28 @@ export default function Page() {
 
 	const startIntervalPhase = useCallback(() => {
 		const intervalTime = convertMinutesToSeconds(intervalMinutes);
+		const startTime = Date.now();
+		const endTime = startTime + (intervalTime * 1000);
+		
+		endTimeRef.current = endTime;
 		setStatus("interval");
 		setTimeRemaining(intervalTime);
 		setTotalTime(intervalTime);
 
+		requestWakeLock();
+
 		timerRef.current = setInterval(() => {
-			setTimeRemaining((prev) => {
-				if (prev <= 1) {
-					clearInterval(timerRef.current!);
-					startAlarmPhase();
-					return 0;
-				}
-				return prev - 1;
-			});
-		}, 1000);
+			const now = Date.now();
+			const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
+			
+			setTimeRemaining(remaining);
+			
+			if (remaining <= 0) {
+				clearInterval(timerRef.current!);
+				endTimeRef.current = null;
+				startAlarmPhase();
+			}
+		}, 100);
 	}, [intervalMinutes]);
 
 	const stopAlarm = useCallback(() => {
@@ -97,6 +158,8 @@ export default function Page() {
 		if (timerRef.current) {
 			clearInterval(timerRef.current);
 		}
+		releaseWakeLock();
+		endTimeRef.current = null;
 		setIsTestingAlarm(false);
 		setStatus("setup");
 		setTimeRemaining(0);
