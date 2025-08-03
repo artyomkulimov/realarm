@@ -28,6 +28,24 @@ export default function Page() {
 	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 	const endTimeRef = useRef<number | null>(null);
 
+	const startAlarmPhase = useCallback(() => {
+		if (enableAlarmCycling && selectedAlarms.length > 0) {
+			let randomAlarm;
+			let attempts = 0;
+			do {
+				const randomIndex = Math.floor(Math.random() * selectedAlarms.length);
+				randomAlarm = selectedAlarms[randomIndex];
+				attempts++;
+			} while (randomAlarm === currentCyclingAlarm && attempts < 10 && selectedAlarms.length > 1);
+			
+			setCurrentCyclingAlarm(randomAlarm);
+			console.log('Starting alarm phase with cycling alarm:', randomAlarm, 'from', selectedAlarms.length, 'selected alarms');
+		}
+		setStatus("alarming");
+		setTimeRemaining(0);
+		setTotalTime(0);
+	}, [enableAlarmCycling, selectedAlarms, currentCyclingAlarm]);
+
 	useAlarmSound(status === "alarming" || isTestingAlarm, volume, enableAlarmCycling ? currentCyclingAlarm : alarmSound, selectedAlarms, enableAlarmCycling);
 
 	useEffect(() => {
@@ -134,24 +152,6 @@ export default function Page() {
 	};
 
 
-
-	const startAlarmPhase = useCallback(() => {
-		if (enableAlarmCycling && selectedAlarms.length > 0) {
-			let randomAlarm;
-			let attempts = 0;
-			do {
-				const randomIndex = Math.floor(Math.random() * selectedAlarms.length);
-				randomAlarm = selectedAlarms[randomIndex];
-				attempts++;
-			} while (randomAlarm === currentCyclingAlarm && attempts < 10 && selectedAlarms.length > 1);
-			
-			setCurrentCyclingAlarm(randomAlarm);
-			console.log('Starting alarm phase with cycling alarm:', randomAlarm, 'from', selectedAlarms.length, 'selected alarms');
-		}
-		setStatus("alarming");
-		setTimeRemaining(0);
-		setTotalTime(0);
-	}, [enableAlarmCycling, selectedAlarms, currentCyclingAlarm]);
 
 	const startIntervalPhase = useCallback(() => {
 		const intervalTime = convertMinutesToSeconds(intervalMinutes);
