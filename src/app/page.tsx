@@ -15,7 +15,7 @@ export default function Page() {
 	const [alarmSound, setAlarmSound] = useState("Air Raid Siren.mp3");
 	const [selectedAlarms, setSelectedAlarms] = useState<string[]>(["Air Raid Siren.mp3"]);
 	const [enableAlarmCycling, setEnableAlarmCycling] = useState(false);
-	const [currentAlarmIndex, setCurrentAlarmIndex] = useState(0);
+
 	const [currentCyclingAlarm, setCurrentCyclingAlarm] = useState("Air Raid Siren.mp3");
 	const [status, setStatus] = useState<AlarmStatus>("setup");
 	const [timeRemaining, setTimeRemaining] = useState(0);
@@ -92,9 +92,16 @@ export default function Page() {
 			setIsTestingAlarm(false);
 		} else {
 			if (enableAlarmCycling && selectedAlarms.length > 0) {
-				const testAlarm = getNextAlarm();
-				setCurrentCyclingAlarm(testAlarm);
-				console.log('Testing cycling alarm:', testAlarm);
+				let randomAlarm;
+				let attempts = 0;
+				do {
+					const randomIndex = Math.floor(Math.random() * selectedAlarms.length);
+					randomAlarm = selectedAlarms[randomIndex];
+					attempts++;
+				} while (randomAlarm === currentCyclingAlarm && attempts < 10 && selectedAlarms.length > 1);
+				
+				setCurrentCyclingAlarm(randomAlarm);
+				console.log('Testing cycling alarm:', randomAlarm);
 			}
 			setIsTestingAlarm(true);
 		}
@@ -126,32 +133,25 @@ export default function Page() {
 		}, 100);
 	};
 
-	const getNextAlarm = () => {
-		if (!enableAlarmCycling || selectedAlarms.length === 0) {
-			return alarmSound;
-		}
-		
-		let randomAlarm;
-		let attempts = 0;
-		do {
-			const randomIndex = Math.floor(Math.random() * selectedAlarms.length);
-			randomAlarm = selectedAlarms[randomIndex];
-			attempts++;
-		} while (randomAlarm === currentCyclingAlarm && attempts < 10 && selectedAlarms.length > 1);
-		
-		return randomAlarm;
-	};
 
-	const startAlarmPhase = () => {
+
+	const startAlarmPhase = useCallback(() => {
 		if (enableAlarmCycling && selectedAlarms.length > 0) {
-			const nextAlarm = getNextAlarm();
-			setCurrentCyclingAlarm(nextAlarm);
-			console.log('Starting alarm phase with cycling alarm:', nextAlarm, 'from', selectedAlarms.length, 'selected alarms');
+			let randomAlarm;
+			let attempts = 0;
+			do {
+				const randomIndex = Math.floor(Math.random() * selectedAlarms.length);
+				randomAlarm = selectedAlarms[randomIndex];
+				attempts++;
+			} while (randomAlarm === currentCyclingAlarm && attempts < 10 && selectedAlarms.length > 1);
+			
+			setCurrentCyclingAlarm(randomAlarm);
+			console.log('Starting alarm phase with cycling alarm:', randomAlarm, 'from', selectedAlarms.length, 'selected alarms');
 		}
 		setStatus("alarming");
 		setTimeRemaining(0);
 		setTotalTime(0);
-	};
+	}, [enableAlarmCycling, selectedAlarms, currentCyclingAlarm]);
 
 	const startIntervalPhase = useCallback(() => {
 		const intervalTime = convertMinutesToSeconds(intervalMinutes);
@@ -195,7 +195,6 @@ export default function Page() {
 		setTimeRemaining(0);
 		setTotalTime(0);
 		setCycleCount(0);
-		setCurrentAlarmIndex(0);
 		setFixedWakeupTime(null);
 	};
 

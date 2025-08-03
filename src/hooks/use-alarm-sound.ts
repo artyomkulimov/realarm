@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useCallback } from "react"
 
 export const useAlarmSound = (isAlarming: boolean, volume: number = 50, soundFile: string = "Air Raid Siren.mp3", cyclingAlarms?: string[], enableCycling?: boolean) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const cycleIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const currentSoundIndexRef = useRef(0)
 
   useEffect(() => {
     if (!audioRef.current || audioRef.current.src !== `/sounds/${soundFile}`) {
@@ -26,7 +25,7 @@ export const useAlarmSound = (isAlarming: boolean, volume: number = 50, soundFil
 		}
 	}, [volume]);
 
-  const switchToNextSound = () => {
+  const switchToNextSound = useCallback(() => {
     if (!cyclingAlarms || !enableCycling || cyclingAlarms.length <= 1) return;
     
     let nextSound;
@@ -51,7 +50,7 @@ export const useAlarmSound = (isAlarming: boolean, volume: number = 50, soundFil
     audioRef.current = newAudio;
     
     console.log('Switched to:', nextSound);
-  };
+  }, [cyclingAlarms, enableCycling, volume]);
 
   useEffect(() => {
 		if (!audioRef.current) return;
@@ -101,7 +100,7 @@ export const useAlarmSound = (isAlarming: boolean, volume: number = 50, soundFil
 			  cycleIntervalRef.current = null;
 			}
 		};
-	}, [isAlarming, enableCycling, cyclingAlarms, volume]);
+	}, [isAlarming, enableCycling, cyclingAlarms, volume, switchToNextSound]);
 
 	useEffect(() => {
 		return () => {
