@@ -13,6 +13,10 @@ export default function Page() {
 	const [intervalMinutes, setIntervalMinutes] = useState(5);
 	const [volume, setVolume] = useState(50);
 	const [alarmSound, setAlarmSound] = useState("Air Raid Siren.mp3");
+	const [selectedAlarms, setSelectedAlarms] = useState<string[]>(["Air Raid Siren.mp3"]);
+	const [enableAlarmCycling, setEnableAlarmCycling] = useState(false);
+	const [currentAlarmIndex, setCurrentAlarmIndex] = useState(0);
+	const [currentCyclingAlarm, setCurrentCyclingAlarm] = useState("Air Raid Siren.mp3");
 	const [status, setStatus] = useState<AlarmStatus>("setup");
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
@@ -24,7 +28,7 @@ export default function Page() {
 	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 	const endTimeRef = useRef<number | null>(null);
 
-	useAlarmSound(status === "alarming" || isTestingAlarm, volume, alarmSound);
+	useAlarmSound(status === "alarming" || isTestingAlarm, volume, enableAlarmCycling ? currentCyclingAlarm : alarmSound, selectedAlarms, enableAlarmCycling);
 
 	useEffect(() => {
 		return () => {
@@ -87,6 +91,11 @@ export default function Page() {
 		if (isTestingAlarm) {
 			setIsTestingAlarm(false);
 		} else {
+			if (enableAlarmCycling && selectedAlarms.length > 0) {
+				const testAlarm = getNextAlarm();
+				setCurrentCyclingAlarm(testAlarm);
+				console.log('Testing cycling alarm:', testAlarm);
+			}
 			setIsTestingAlarm(true);
 		}
 	};
@@ -117,7 +126,28 @@ export default function Page() {
 		}, 100);
 	};
 
+	const getNextAlarm = () => {
+		if (!enableAlarmCycling || selectedAlarms.length === 0) {
+			return alarmSound;
+		}
+		
+		let randomAlarm;
+		let attempts = 0;
+		do {
+			const randomIndex = Math.floor(Math.random() * selectedAlarms.length);
+			randomAlarm = selectedAlarms[randomIndex];
+			attempts++;
+		} while (randomAlarm === currentCyclingAlarm && attempts < 10 && selectedAlarms.length > 1);
+		
+		return randomAlarm;
+	};
+
 	const startAlarmPhase = () => {
+		if (enableAlarmCycling && selectedAlarms.length > 0) {
+			const nextAlarm = getNextAlarm();
+			setCurrentCyclingAlarm(nextAlarm);
+			console.log('Starting alarm phase with cycling alarm:', nextAlarm, 'from', selectedAlarms.length, 'selected alarms');
+		}
 		setStatus("alarming");
 		setTimeRemaining(0);
 		setTotalTime(0);
@@ -165,6 +195,7 @@ export default function Page() {
 		setTimeRemaining(0);
 		setTotalTime(0);
 		setCycleCount(0);
+		setCurrentAlarmIndex(0);
 		setFixedWakeupTime(null);
 	};
 
@@ -203,12 +234,16 @@ export default function Page() {
 				intervalMinutes={intervalMinutes}
 				volume={volume}
 				alarmSound={alarmSound}
+				selectedAlarms={selectedAlarms}
+				enableAlarmCycling={enableAlarmCycling}
 				isTestingAlarm={isTestingAlarm}
 				onSleepHoursChange={setSleepHours}
 				onSleepMinutesChange={setSleepMinutes}
 				onIntervalChange={setIntervalMinutes}
 				onVolumeChange={setVolume}
 				onAlarmSoundChange={setAlarmSound}
+				onSelectedAlarmsChange={setSelectedAlarms}
+				onEnableAlarmCyclingChange={setEnableAlarmCycling}
 				onStart={startCycle}
 				onReset={resetApp}
 				onTestAlarm={testAlarm}

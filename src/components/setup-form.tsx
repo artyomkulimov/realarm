@@ -7,6 +7,7 @@ import { SleepDurationInput } from "./sleep-duration-input";
 import { IntervalInput } from "./interval-input";
 import { VolumeInput } from "./volume-input";
 import { AlarmSoundSelector } from "./alarm-sound-selector";
+import { MultiAlarmSelector } from "./multi-alarm-selector";
 import { ResetButton } from "./reset-button";
 import { CurrentTimeDisplay } from "./current-time-display";
 import { WakeupTimeDisplay } from "./wakeup-time-display";
@@ -17,12 +18,16 @@ interface SetupFormProps {
 	intervalMinutes: number;
 	volume: number;
 	alarmSound: string;
+	selectedAlarms: string[];
+	enableAlarmCycling: boolean;
 	isTestingAlarm: boolean;
 	onSleepHoursChange: (hours: number) => void;
 	onSleepMinutesChange: (minutes: number) => void;
 	onIntervalChange: (minutes: number) => void;
 	onVolumeChange: (volume: number) => void;
 	onAlarmSoundChange: (sound: string) => void;
+	onSelectedAlarmsChange: (alarms: string[]) => void;
+	onEnableAlarmCyclingChange: (enabled: boolean) => void;
 	onStart: () => void;
 	onReset: () => void;
 	onTestAlarm: () => void;
@@ -35,12 +40,16 @@ export function SetupForm({
 	intervalMinutes,
 	volume,
 	alarmSound,
+	selectedAlarms,
+	enableAlarmCycling,
 	isTestingAlarm,
 	onSleepHoursChange,
 	onSleepMinutesChange,
 	onIntervalChange,
 	onVolumeChange,
 	onAlarmSoundChange,
+	onSelectedAlarmsChange,
+	onEnableAlarmCyclingChange,
 	onStart,
 	onReset,
 	onTestAlarm,
@@ -73,10 +82,18 @@ export function SetupForm({
 						onChange={onIntervalChange}
 					/>
 					<VolumeInput volume={volume} onChange={onVolumeChange} />
-					<AlarmSoundSelector
-						selectedSound={alarmSound}
-						onSoundChange={onAlarmSoundChange}
+					<MultiAlarmSelector
+						selectedAlarms={selectedAlarms}
+						enableCycling={enableAlarmCycling}
+						onAlarmsChange={onSelectedAlarmsChange}
+						onCyclingChange={onEnableAlarmCyclingChange}
 					/>
+					{!enableAlarmCycling && (
+						<AlarmSoundSelector
+							selectedSound={alarmSound}
+							onSoundChange={onAlarmSoundChange}
+						/>
+					)}
 					<div className="flex gap-2">
 						<Button
 							onClick={onTestAlarm}
