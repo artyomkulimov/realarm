@@ -16,7 +16,10 @@ interface AlarmSoundSelectorProps {
 
 const ALARM_SOUNDS = [
 	{ file: "Air Raid Siren.mp3", name: "air raid siren", emoji: "🚨" },
-	{ file: "Rooster.wav", name: "rooster", emoji: "🐓" },
+	{ file: "mixkit-facility-alarm-sound-999.wav", name: "facility alarm", emoji: "🏭" },
+	{ file: "mixkit-digital-clock-digital-alarm-buzzer-992.wav", name: "digital buzzer", emoji: "⏰" },
+	{ file: "mixkit-sound-alert-in-hall-1006.wav", name: "hall alert", emoji: "🔔" },
+	{ file: "mixkit-critical-alarm-1004.wav", name: "critical alarm", emoji: "⚠️" },
 ];
 
 export function AlarmSoundSelector({
