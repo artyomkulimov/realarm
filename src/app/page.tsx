@@ -61,7 +61,7 @@ export default function Page() {
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-	}, [status]);
+	}, [status, startAlarmPhase]);
 
 	// Request wake lock when timer is active
 	const requestWakeLock = async () => {
@@ -177,7 +177,7 @@ export default function Page() {
 				startAlarmPhase();
 			}
 		}, 100);
-	}, [intervalMinutes]);
+	}, [intervalMinutes, startAlarmPhase]);
 
 	const stopAlarm = useCallback(() => {
 		setCycleCount((prev) => prev + 1);
